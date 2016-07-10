@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+{% block title %} Guest Book! {% endblock %}
+{% block body %}
+
+    {{ form_start(form, {'method': 'POST'}) }}
+    {{ form_errors(form) }}
+    <p>
+        {{ form_label(form.name, 'User Name') }}<br>
+        {{ form_errors(form.name) }}
+        {{ form_widget(form.name) }}
+    </p>
+
+
+    <p>
+        {{ form_label(form.email, 'Email') }}<br>
+        {{ form_errors(form.email) }}
+        {{ form_widget(form.email) }}
+    </p>
+
+    <p>
+        {{ form_label(form.text, 'Текст сообщения') }}<br>
+        {{ form_errors(form.text) }}
+        {{ form_widget(form.text) }}
+    </p>
+    <p>
+        {{ form_errors(form.captchaCode) }}<br>
+        {{ form_widget(form.captchaCode) }}
+    </p>
+
+    <button type="submit">Добавить!</button>
+    {{ form_end(form) }}
+    <br>
+
+    <table class="table">
+        <tr class="success">
+            {# sorting of properties based on query components #}
+            <th>
+                <a href="{% if order == "name" and order_d == 'DESC' %}
+                {{ path('bookpage', {'page': current_page,'order': 'name', 'order_d': 'ASC'}) }}
+            {% else %}
+                {{ path('bookpage', {'page': current_page,'order': 'name' }) }}
+            {% endif %}">UserName</a>
+
+            </th>
+
+            <th>Text</th>
+            <th>
+                <a href="{% if order == "date" and order_d == 'DESC' %}
+                    {{ path('bookpage', {'page': current_page,'order': 'date', 'order_d': 'ASC'}) }}
+            {% else %}
+                {{ path('bookpage', {'page': current_page,'order': 'date' }) }}
+            {% endif %}">Date</a>
+            </th>
+            <th>
+                <a href="{% if order == "email" and order_d == 'DESC' %}
+                    {{ path('bookpage', {'page': current_page,'order': 'email', 'order_d': 'ASC'}) }}
+            {% else %}
+                {{ path('bookpage', {'page': current_page,'order': 'email' }) }}
+            {% endif %}">Email</a>
+            </th>
+        </tr>
+
+        {# table body #}
+        {% for post in posts %}
+            <tr  {% if loop.index % 2 == 0  %} class="danger" {% endif %}>
+                <td>{{ post.name }}</td>
+                <td width="100%" align="center">{{ post.text }}</td>
+                <td>{{ post.createdAt | date('Y-m-d') }}, {{ post.createdAt | date('H:i:s') }}</td>
+                <td>{{ post.email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if total_pages >0 %}
+        <div >
+            <ul class="pagination">
+                {% for i in 1..total_pages %}
+                    {% if loop.first %}
+                        <li {% if current_page == 1 %} style="display: none; {% endif %} "><a href="{{ path('bookpage', {'page': current_page-1,'order': order, 'order_d': order_d}) }}"><< Назад</a></li>
+                    {% endif %}
+                    <li {% if current_page == loop.index %} {% endif %}><a  href="{{ path('bookpage', {'page': loop.index,'order':order, 'order_d': order_d}) }}">{{ loop.index }}</a></li>
+                    {% if loop.last %}
+                        <li  {% if current_page == total_pages %}style="display: none; {% endif %}> <a href="{{ path('bookpage', {'page': current_page+1,'order':order, 'order_d': order_d}) }}">Далее >></a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+{% endblock %}

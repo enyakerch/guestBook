@@ -1,0 +1,7 @@
+.pagination{
+    margin-left: 400px !important; /* Обнуляем значение отступов */
+    padding: 4px; /* Значение полей */
+}
+th{
+    text-align: center !important;
+}
